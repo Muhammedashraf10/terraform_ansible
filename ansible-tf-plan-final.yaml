@@ -1,0 +1,32 @@
+# This playbook runs a basic DF command.
+
+- hosts: localhost
+  #remote_user: root
+
+  tasks:
+  - name: init the terraform
+    register: plan_result
+    shell: terraform init
+    args:
+            chdir: '/home/cloud_user/'
+            
+  - name: plan the terraform 
+    shell: terraform plan
+    args:
+            chdir: '/home/cloud_user'
+            
+  - name: run the script
+    register: final_result #to store the output of terraform
+    terraform: 
+     project_path: '/home/cloud_user/'
+     state: present # the state of the resource to be created, present means deploy it and start it 
+     backend_config: #backend configuration to store the state file of terraform 
+       bucket: "testmic1234"
+       key: "terraform.tfstate2"
+       region: "us-west-2"
+     variables:
+      aws_region: "{{ aws_region }}"      # this will be passed while calling the ansible play-book
+      nameTag: "{{ nameTag }}" #this will be passed while calling the ansible play-book
+
+  - debug:
+          var:  final_result.outputs.instance_ip_addr.value #the outputs to be defined 
