@@ -11,4 +11,4 @@ Files:
 
 
 run the ansible playbook 
-ansible-playbook ansible_terraform.yaml -e "aws_region=us-west-2 nameTag=Mu1"
+ansible-playbook ansible_tf_plan.yaml -e "aws_region=us-west-2 nameTag=Mu1"
