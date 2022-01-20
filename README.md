@@ -7,3 +7,8 @@ Ansible 2.5+ ( 2.7+ to use Terraform's backend_config)
 
 Files:
         - 
+
+
+
+run the ansible playbook 
+ansible-playbook ansible_terraform.yaml -e "aws_region=us-west-2 nameTag=Mu1"
