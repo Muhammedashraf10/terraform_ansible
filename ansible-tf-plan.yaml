@@ -1,0 +1,29 @@
+- hosts: localhost
+  #remote_user: root
+
+  tasks:
+  - name: init the terraform
+    register: plan_result
+    shell: terraform init
+    args:
+            chdir: '/home/cloud_user/'
+            
+  - name: plan the terraform 
+    shell: terraform plan 
+    args:
+            chdir: '/home/cloud_user'
+            
+  - name: run the script
+    terraform: 
+     project_path: '/home/cloud_user/'
+     state: present
+     backend_config:
+       bucket: "testmic1234"
+       key: "terraform.xxtfstate"
+       region: "us-west-2"
+     variables:
+      aws_region: "{{ aws_region }}"      
+      nameTag: "{{ nameTag }}"
+
+  - debug:
+      var: plan_result.stdout_lines
