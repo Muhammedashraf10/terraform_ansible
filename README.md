@@ -34,4 +34,3 @@ https://docs.ansible.com/ansible/2.9/modules/terraform_module.html
 https://docs.ansible.com/ansible/latest/collections/community/general/terraform_module.html  
 https://github.com/NikAraga/ansible-tf-trigger  
 https://belgium.devoteam.com/blog/ansible-and-terraform-episode-3
-![image](https://user-images.githubusercontent.com/14074873/150372199-81c70f42-94eb-4e7a-b32b-c6de97acfc54.png)
