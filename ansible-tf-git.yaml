@@ -1,0 +1,42 @@
+# This playbook runs a basic DF command.
+
+- hosts: localhost
+  #remote_user: root
+  vars_files:
+     - secrets.yml
+  tasks:
+  - name: getting the repo
+    ansible.builtin.git:
+      repo: 'https://{{gituser}}:{{gitpass}}@github.com/Muhammedashraf10/terraform-ansible.git'
+      dest: /home/cloud_user/test_git
+      force: yes
+
+  - name: init the terraform
+    register: plan_result
+    shell: terraform init
+    args:
+            chdir: '/home/cloud_user/test_git'
+
+  - name: plan the terraform
+    shell: terraform plan
+    args:
+            chdir: '/home/cloud_user/test_git'
+
+  - name: run the script
+    register: final_result
+    terraform:
+     project_path: '/home/cloud_user/test_git'
+     state: present
+     backend_config:
+       bucket: "testmic1234"
+       key: "terraform.tfstate2"
+       region: "us-west-2"
+     variables:
+      aws_region: "{{ aws_region }}"
+      nameTag: "{{ nameTag }}"
+      
+  - name: cleaning the files 
+    shell: rm -rf /home/cloud_user/test_git/*.tf
+
+  - debug:
+          var:  final_result.outputs.instance_ip_addr.value
