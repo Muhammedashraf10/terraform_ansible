@@ -1,0 +1,48 @@
+# This playbook runs a basic DF command.
+
+- hosts: localhost
+  #remote_user: root
+  vars_files:
+     - secrets.yml
+  tasks:
+  - name: getting the repo
+    ansible.builtin.git:
+      repo: 'https://{{gituser}}:{{gitpass}}@github.com/Muhammedashraf10/terraform-ansible.git'
+      dest: /home/cloud_user/test_git
+      force: yes
+
+  - name: init the terraform
+    register: plan_result
+    shell: terraform init 
+    args:
+            chdir: '/home/cloud_user/test_git'  
+
+ 
+  - name: run the script
+    register: final_result
+    terraform:
+     project_path: '/home/cloud_user/test_git'
+     state: present
+     variables:
+      aws_region: "{{ aws_region }}"
+      nameTag: "{{ nameTag }}"
+  
+      
+  - name: cleaning the files 
+    shell: rm -rf /home/cloud_user/test_git/*.tf
+
+  - name: writing the variables to a file
+    copy: 
+      content: "{{ final_result.outputs.instance_ip_addr.value }}\n{{ final_result.outputs.instance_public_ip.value }}\n" 
+      dest: "/home/cloud_user/variables.txt"
+
+
+ 
+  - name: Print some debug information 
+    vars: 
+      msg: |
+          Private_IP: {{ final_result.outputs.instance_ip_addr.value }}
+          Public_IP: {{ final_result.outputs.instance_public_ip.value }}
+    debug: 
+      msg: "{{ msg.split('\n') }}"       
+    tags: debug_info
